@@ -25,11 +25,10 @@ class _HomePageState extends State<HomePage> {
 
   _loadData() async {
     // todo: Load list of polls here
-    Uri uri = Uri.parse('https://cpsu-test-api.herokuapp.com/api/polls');
-    var res = await http.get(uri);
+    var res = await ApiClient().getId();
     print(res.statusCode);
     if (res.statusCode == 200) {
-      List result = jsonDecode(res.body);
+      List result = jsonDecode();
       setState(() {
         _polls = result.map((item) => Poll.fromJson(item)).toList();
       });
