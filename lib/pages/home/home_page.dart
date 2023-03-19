@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:election_2566_poll/services/api.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import '../../models/poll.dart';
 import '../my_scaffold.dart';
 
@@ -22,6 +25,15 @@ class _HomePageState extends State<HomePage> {
 
   _loadData() async {
     // todo: Load list of polls here
+    Uri uri = Uri.parse('https://cpsu-test-api.herokuapp.com/api/polls');
+    var res = await http.get(uri);
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      List result = jsonDecode(res.body);
+      setState(() {
+        _polls = result.map((item) => Poll.fromJson(item)).toList();
+      });
+    }
   }
 
   @override
@@ -29,7 +41,8 @@ class _HomePageState extends State<HomePage> {
     return MyScaffold(
       body: Column(
         children: [
-          Image.network('https://cpsu-test-api.herokuapp.com/images/election.jpg'),
+          Image.network(
+              'https://cpsu-test-api.herokuapp.com/images/election.jpg'),
           Expanded(
             child: Stack(
               children: [
@@ -48,7 +61,15 @@ class _HomePageState extends State<HomePage> {
       itemCount: _polls!.length,
       itemBuilder: (BuildContext context, int index) {
         // todo: Create your poll item by replacing this Container()
-        return Container();
+        var polls = _polls![index];
+        return Container(
+          child: Row(
+            children: [
+              Text('${polls.id.toString()}.'),
+              //TextButton(onPressed: () {}, child: Text('${polls.choices}')),
+            ],
+          ),
+        );
       },
     );
   }
@@ -70,4 +91,20 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+// Widget _buildListItem(BuildContext context, int index){
+//   var polls = _polls![index];
+//   return Padding(
+//     padding: const EdgeInsets.all(8.0),
+//     child: Container(
+//       //margin: const EdgeInsets.all(8.0),
+//       color: Colors.white10,
+//       child: Row(
+//         children: [
+//           Text('${polls.id.toString()}.${polls.choices}')
+//         ],
+//       ),
+//     ),
+//   );
+// }
 }
